@@ -1,0 +1,158 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "snippet.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/snippets": {
+      "get": {
+        "operationId": "ListSnippets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/query_recipe_apiListSnippetsResponse"
+            }
+          }
+        },
+        "tags": [
+          "SnippetService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateSnippet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/typeSnippet"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/typeSnippet"
+            }
+          }
+        ],
+        "tags": [
+          "SnippetService"
+        ]
+      }
+    },
+    "/snippets/{snippet.id}": {
+      "patch": {
+        "operationId": "UpdateSnippet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/typeSnippet"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "snippet.id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/typeSnippet"
+            }
+          }
+        ],
+        "tags": [
+          "SnippetService"
+        ]
+      }
+    },
+    "/snippets/{snippet_id}": {
+      "get": {
+        "operationId": "GetSnippet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/typeSnippet"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "snippet_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SnippetService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteSnippet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "snippet_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "SnippetService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "query_recipe_apiListSnippetsResponse": {
+      "type": "object",
+      "properties": {
+        "snippets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typeSnippet"
+          }
+        }
+      }
+    },
+    "typeSnippet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
