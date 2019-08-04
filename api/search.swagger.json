@@ -26,6 +26,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/query_recipe_apiSearchRequest"
+            }
+          }
+        ],
         "tags": [
           "SearchService"
         ]
@@ -33,6 +43,14 @@
     }
   },
   "definitions": {
+    "query_recipe_apiSearchRequest": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string"
+        }
+      }
+    },
     "query_recipe_apiSearchResult": {
       "type": "object",
       "properties": {

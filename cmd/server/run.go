@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+	"os"
+
+	"golang.org/x/oauth2"
 
 	"github.com/google/go-github/v27/github"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
@@ -13,8 +16,9 @@ import (
 )
 
 type Config struct {
-	Owner      string // e.g. rerost
-	Repository string // e.g. query-recipe-api
+	Owner             string // e.g. rerost
+	Repository        string // e.g. query-recipe-api
+	GithubAccessToken string
 }
 
 func run() error {
@@ -23,20 +27,33 @@ func run() error {
 
 	// TODO(@rerost) Use wire
 	cfg := Config{
-		Owner:      "rerost",
-		Repository: "test-query-recipe",
+		Owner:             "rerost",
+		Repository:        "unstable",
+		GithubAccessToken: os.Getenv("GITHUB_ACCESS_TOKEN"),
 	}
-	httpClient := new(http.Client)
-	ghc := github.NewClient(httpClient)
+
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: cfg.GithubAccessToken},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	ghc := github.NewClient(tc)
 	searchClient := search.NewGHClient(ghc, cfg.Owner, cfg.Repository)
 	dataClient := data.NewGHClient(ghc, cfg.Owner, cfg.Repository)
 	repo := snippet.NewRepo(searchClient, dataClient)
+
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "3000"
+	}
 
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithServers(
 			server.NewSearchServiceServer(repo),
 		),
+		grapiserver.WithGatewayAddr("tcp", fmt.Sprintf(":%s", port)),
 	)
+
 	return s.ServeContext(ctx)
 }

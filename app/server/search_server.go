@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -34,6 +36,7 @@ func (s *searchServiceServerImpl) Search(ctx context.Context, req *api_pb.Search
 	query := req.GetKeyword()
 	snippets, err := s.sr.Search(ctx, query)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
 		return nil, status.Error(codes.Internal, "Failed to search snipppets")
 	}
 

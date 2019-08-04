@@ -26,9 +26,9 @@ func NewGHClient(githubClient *github.Client, owner string, repository string) s
 
 func (c *ghClient) Search(ctx context.Context, query string) ([]snippet.SnippetID, error) {
 	githubSearchQuery := strings.Join([]string{
-		query,
 		fmt.Sprintf("repo:%s/%s", c.owner, c.repository),
-	}, "+")
+		query,
+	}, " ")
 	result, _, err := c.githubClient.Search.Code(ctx, githubSearchQuery, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "GithubClient Search.Code error")
