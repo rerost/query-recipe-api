@@ -33,12 +33,7 @@ func convertIDToFilepath(snippetID snippet.SnippetID) (string, error) {
 	return path, nil
 }
 
-func (c *ghClient) Get(ctx context.Context, snippetID snippet.SnippetID) (snippet.Snippet, error) {
-	filepath, err := convertIDToFilepath(snippetID)
-	if err != nil {
-		return snippet.Snippet{}, errors.Wrap(err, "Failed to convertIDToFilepath")
-	}
-
+func (c *ghClient) getFile(ctx context.Context, filepath string) (string, error) {
 	reader, err := c.githubClient.Repositories.DownloadContents(
 		ctx,
 		c.owner,
@@ -47,17 +42,38 @@ func (c *ghClient) Get(ctx context.Context, snippetID snippet.SnippetID) (snippe
 		nil,
 	)
 	if err != nil {
-		return snippet.Snippet{}, errors.Wrap(err, "Failed to download contents")
+		return "", errors.Wrap(err, "Failed to download contents")
 	}
+	defer reader.Close()
 
 	contents, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return snippet.Snippet{}, errors.Wrap(err, "Failed to ioutil.ReadAll(reader)")
+		return "", errors.Wrap(err, "Failed to ioutil.ReadAll(reader)")
+	}
+
+	return string(contents), nil
+}
+
+func (c *ghClient) Get(ctx context.Context, snippetID snippet.SnippetID) (snippet.Snippet, error) {
+	filepath, err := convertIDToFilepath(snippetID)
+	if err != nil {
+		return snippet.Snippet{}, errors.Wrap(err, "Failed to convertIDToFilepath")
+	}
+
+	document, err := c.getFile(ctx, filepath+".md")
+	if err != nil {
+		return snippet.Snippet{}, errors.Wrap(err, "Failed to get document")
+	}
+
+	sql, err := c.getFile(ctx, filepath+".sql")
+	if err != nil {
+		return snippet.Snippet{}, errors.Wrap(err, "Failed to get sql")
 	}
 
 	return snippet.Snippet{
-		ID:  snippetID,
-		SQL: string(contents),
+		ID:       snippetID,
+		Document: string(document),
+		SQL:      string(sql),
 	}, nil
 }
 func (c *ghClient) BulkGet(ctx context.Context, snippetIDs []snippet.SnippetID) ([]snippet.Snippet, error) {

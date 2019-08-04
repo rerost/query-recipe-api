@@ -6,14 +6,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-type SnippetID string // TODO(@rerost) Think type. null.String or string or int64
+// SnippetID = /snippet/test_query (Not /snippet/test_query.sql, /snippet/test_query.md)
+// TODO(@rerost) Think type. null.String or string or int64
+type SnippetID string
 
 type Snippet struct {
-	ID          SnippetID
-	Title       string
-	Team        string
-	Description string
-	SQL         string
+	ID       SnippetID
+	Document string
+	SQL      string
 }
 
 type Repo interface {

@@ -45,8 +45,9 @@ func (s *searchServiceServerImpl) Search(ctx context.Context, req *api_pb.Search
 
 	for i, s := range snippets {
 		result.Hits[i] = &type_pb.Snippet{
-			Id:  string(s.ID),
-			Sql: s.SQL,
+			Id:       string(s.ID),
+			Sql:      s.SQL,
+			Document: s.Document,
 		}
 	}
 
