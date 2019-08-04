@@ -70,6 +70,10 @@
         },
         "sql": {
           "type": "string"
+        },
+        "document": {
+          "type": "string",
+          "title": "GFM"
         }
       }
     }
