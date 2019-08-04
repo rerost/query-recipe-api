@@ -27,8 +27,8 @@ func run() error {
 
 	// TODO(@rerost) Use wire
 	cfg := Config{
-		Owner:             "rerost",
-		Repository:        "unstable",
+		Owner:             os.Getenv("GITHUB_OWNER"),
+		Repository:        os.Getenv("GITHUB_REPOSITORY"),
 		GithubAccessToken: os.Getenv("GITHUB_ACCESS_TOKEN"),
 	}
 
