@@ -27,6 +27,7 @@ func NewGHClient(githubClient *github.Client, owner string, repository string) s
 func (c *ghClient) Search(ctx context.Context, query string) ([]snippet.SnippetID, error) {
 	githubSearchQuery := strings.Join([]string{
 		fmt.Sprintf("repo:%s/%s", c.owner, c.repository),
+		"language:markdown",
 		query,
 	}, " ")
 	result, _, err := c.githubClient.Search.Code(ctx, githubSearchQuery, nil)
@@ -34,8 +35,8 @@ func (c *ghClient) Search(ctx context.Context, query string) ([]snippet.SnippetI
 		return nil, errors.Wrap(err, "GithubClient Search.Code error")
 	}
 
-	snippetIDs := make([]snippet.SnippetID, len(result.CodeResults))
-	for i, r := range result.CodeResults {
+	snippetIDs := []snippet.SnippetID{}
+	for _, r := range result.CodeResults {
 		if r.Path == nil {
 			return nil, errors.Wrapf(
 				errors.New("Unexpected error Path is nil"),
@@ -43,7 +44,15 @@ func (c *ghClient) Search(ctx context.Context, query string) ([]snippet.SnippetI
 				r,
 			)
 		}
-		snippetIDs[i] = snippet.SnippetID(*r.Path)
+		if !strings.HasSuffix(*r.Path, ".md") {
+			return nil, errors.Wrapf(
+				errors.New("Not sql file is passed"),
+				"CodeResult:%v",
+				r,
+			)
+		}
+		id := strings.TrimSuffix(*r.Path, ".md")
+		snippetIDs = append(snippetIDs, snippet.SnippetID(id))
 	}
 	return snippetIDs, nil
 }
