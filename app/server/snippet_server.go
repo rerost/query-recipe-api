@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	api_pb "github.com/rerost/query-recipe-api/api"
+	type_pb "github.com/rerost/query-recipe-api/api/type"
 )
 
 // SnippetServiceServer is a composite interface of api_pb.SnippetServiceServer and grapiserver.Server.
@@ -30,17 +31,17 @@ func (s *snippetServiceServerImpl) ListSnippets(ctx context.Context, req *api_pb
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *snippetServiceServerImpl) GetSnippet(ctx context.Context, req *api_pb.GetSnippetRequest) (*api_pb.Snippet, error) {
+func (s *snippetServiceServerImpl) GetSnippet(ctx context.Context, req *api_pb.GetSnippetRequest) (*type_pb.Snippet, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *snippetServiceServerImpl) CreateSnippet(ctx context.Context, req *api_pb.CreateSnippetRequest) (*api_pb.Snippet, error) {
+func (s *snippetServiceServerImpl) CreateSnippet(ctx context.Context, req *api_pb.CreateSnippetRequest) (*type_pb.Snippet, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }
 
-func (s *snippetServiceServerImpl) UpdateSnippet(ctx context.Context, req *api_pb.UpdateSnippetRequest) (*api_pb.Snippet, error) {
+func (s *snippetServiceServerImpl) UpdateSnippet(ctx context.Context, req *api_pb.UpdateSnippetRequest) (*type_pb.Snippet, error) {
 	// TODO: Not yet implemented.
 	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
 }

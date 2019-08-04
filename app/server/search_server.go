@@ -2,13 +2,17 @@ package server
 
 import (
 	"context"
+	"fmt"
+	"os"
 
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/rerost/query-recipe-api/repo/snippet"
+
+	"github.com/izumin5210/grapi/pkg/grapiserver"
 	api_pb "github.com/rerost/query-recipe-api/api"
+	type_pb "github.com/rerost/query-recipe-api/api/type"
 )
 
 // SearchServiceServer is a composite interface of api_pb.SearchServiceServer and grapiserver.Server.
@@ -18,34 +22,33 @@ type SearchServiceServer interface {
 }
 
 // NewSearchServiceServer creates a new SearchServiceServer instance.
-func NewSearchServiceServer() SearchServiceServer {
-	return &searchServiceServerImpl{}
+func NewSearchServiceServer(sr snippet.Repo) SearchServiceServer {
+	return &searchServiceServerImpl{
+		sr: sr,
+	}
 }
 
 type searchServiceServerImpl struct {
+	sr snippet.Repo
 }
 
-func (s *searchServiceServerImpl) ListSearches(ctx context.Context, req *api_pb.ListSearchesRequest) (*api_pb.ListSearchesResponse, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
+func (s *searchServiceServerImpl) Search(ctx context.Context, req *api_pb.SearchRequest) (*api_pb.SearchResult, error) {
+	query := req.GetKeyword()
+	snippets, err := s.sr.Search(ctx, query)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		return nil, status.Error(codes.Internal, "Failed to search snipppets")
+	}
 
-func (s *searchServiceServerImpl) GetSearch(ctx context.Context, req *api_pb.GetSearchRequest) (*api_pb.Search, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
+	result := api_pb.SearchResult{}
+	result.Hits = make([]*type_pb.Snippet, len(snippets))
 
-func (s *searchServiceServerImpl) CreateSearch(ctx context.Context, req *api_pb.CreateSearchRequest) (*api_pb.Search, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
+	for i, s := range snippets {
+		result.Hits[i] = &type_pb.Snippet{
+			Id:  string(s.ID),
+			Sql: s.SQL,
+		}
+	}
 
-func (s *searchServiceServerImpl) UpdateSearch(ctx context.Context, req *api_pb.UpdateSearchRequest) (*api_pb.Search, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
-}
-
-func (s *searchServiceServerImpl) DeleteSearch(ctx context.Context, req *api_pb.DeleteSearchRequest) (*empty.Empty, error) {
-	// TODO: Not yet implemented.
-	return nil, status.Error(codes.Unimplemented, "TODO: You should implement it!")
+	return &result, nil
 }
