@@ -83,7 +83,7 @@ func RegisterSearchServiceHandler(ctx context.Context, mux *runtime.ServeMux, co
 // "SearchServiceClient" to call the correct interceptors.
 func RegisterSearchServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SearchServiceClient) error {
 
-	mux.Handle("GET", pattern_SearchService_Search_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_SearchService_Search_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)

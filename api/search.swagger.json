@@ -16,7 +16,7 @@
   ],
   "paths": {
     "/search": {
-      "get": {
+      "post": {
         "operationId": "Search",
         "responses": {
           "200": {
@@ -26,14 +26,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "keyword",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
         "tags": [
           "SearchService"
         ]
@@ -56,6 +48,9 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        },
+        "sql": {
           "type": "string"
         }
       }
