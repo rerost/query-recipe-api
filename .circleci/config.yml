@@ -1,0 +1,38 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/rerost/query-recipe-api
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t rerost/query-recipe-api:`git rev-parse HEAD` .
+      - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run: docker push rerost/query-recipe-api:`git rev-parse HEAD`
+  release:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/rerost/query-recipe-api
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t rerost/query-recipe-api:latest .
+      - run: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run: docker push rerost/query-recipe-api:latest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          context: docker push
+      - release:
+          context: docker push
+          filters:
+            branches:
+              only: master
+
