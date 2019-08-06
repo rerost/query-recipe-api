@@ -34,6 +34,9 @@ type searchServiceServerImpl struct {
 
 func (s *searchServiceServerImpl) Search(ctx context.Context, req *api_pb.SearchRequest) (*api_pb.SearchResult, error) {
 	m := req.GetMetadata()
+	if m == nil {
+		return nil, status.Error(codes.InvalidArgument, "Need metadata")
+	}
 	repo := s.r(ctx, di.ProvidorConfig(m.AccessToken, m.Owner, m.Repository))
 	query := req.GetKeyword()
 	snippets, err := repo.Search(ctx, query)
