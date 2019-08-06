@@ -15,11 +15,16 @@ type ghClient struct {
 	repository   string
 }
 
-func NewGHClient(githubClient *github.Client, owner, repository string) snippet.DataClient {
+type Config interface {
+	Owner() string
+	Repository() string
+}
+
+func NewGHClient(githubClient *github.Client, config Config) snippet.DataClient {
 	return &ghClient{
 		githubClient: githubClient,
-		owner:        owner,
-		repository:   repository,
+		owner:        config.Owner(),
+		repository:   config.Repository(),
 	}
 }
 
