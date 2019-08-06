@@ -21,11 +21,11 @@ service SearchService {
 
 message Search {
   string search_id = 1;
-  rerost.query_recipe_api.type.GithubMetadata metadata = 2;
 }
 
 message SearchRequest {
-  string keyword = 1;
+  rerost.query_recipe_api.type.GithubMetadata metadata = 1;
+  string keyword = 2;
 }
 
 message SearchResult {

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/rerost/query-recipe-api/repo/snippet"
+	"github.com/rerost/query-recipe-api/app/di"
 
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	api_pb "github.com/rerost/query-recipe-api/api"
@@ -22,19 +22,21 @@ type SearchServiceServer interface {
 }
 
 // NewSearchServiceServer creates a new SearchServiceServer instance.
-func NewSearchServiceServer(sr snippet.Repo) SearchServiceServer {
+func NewSearchServiceServer(r di.ProvidorRepo) SearchServiceServer {
 	return &searchServiceServerImpl{
-		sr: sr,
+		r: r,
 	}
 }
 
 type searchServiceServerImpl struct {
-	sr snippet.Repo
+	r di.ProvidorRepo
 }
 
 func (s *searchServiceServerImpl) Search(ctx context.Context, req *api_pb.SearchRequest) (*api_pb.SearchResult, error) {
+	m := req.GetMetadata()
+	repo := s.r(ctx, di.ProvidorConfig(m.AccessToken, m.Owner, m.Repository))
 	query := req.GetKeyword()
-	snippets, err := s.sr.Search(ctx, query)
+	snippets, err := repo.Search(ctx, query)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v", err)
 		return nil, status.Error(codes.Internal, "Failed to search snipppets")

@@ -20,15 +20,6 @@ func run() error {
 	// Application context
 	ctx := context.Background()
 
-	// TODO(@rerost) Use wire
-	cfg := di.ProvidorConfig(
-		os.Getenv("GITHUB_ACCESS_TOKEN"),
-		os.Getenv("GITHUB_OWNER"),
-		os.Getenv("GITHUB_REPOSITORY"),
-	)
-
-	repo := di.NewRepo(ctx, cfg)
-
 	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = "3000"
@@ -37,7 +28,7 @@ func run() error {
 	s := grapiserver.New(
 		grapiserver.WithDefaultLogger(),
 		grapiserver.WithServers(
-			server.NewSearchServiceServer(repo),
+			server.NewSearchServiceServer(di.NewRepo),
 		),
 		grapiserver.WithGatewayAddr("tcp", fmt.Sprintf(":%s", port)),
 	)
