@@ -6,6 +6,7 @@ require (
 	github.com/golang/protobuf v1.3.0
 	github.com/google/go-github/v27 v27.0.4
 	github.com/google/wire v0.2.1
+	github.com/gorilla/handlers v1.4.2
 	github.com/grpc-ecosystem/grpc-gateway v1.8.5
 	github.com/izumin5210/grapi v0.4.0
 	github.com/pkg/errors v0.8.1

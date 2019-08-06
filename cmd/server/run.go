@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/izumin5210/grapi/pkg/grapiserver"
 	"github.com/rerost/query-recipe-api/app/di"
 	"github.com/rerost/query-recipe-api/app/server"
@@ -31,6 +32,11 @@ func run() error {
 			server.NewSearchServiceServer(di.NewRepo),
 		),
 		grapiserver.WithGatewayAddr("tcp", fmt.Sprintf(":%s", port)),
+		grapiserver.WithGatewayServerMiddlewares(
+			handlers.CORS(
+				handlers.AllowedOrigins([]string{"*"}),
+			),
+		),
 	)
 
 	return s.ServeContext(ctx)
